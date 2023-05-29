@@ -33,7 +33,7 @@ const Header =()=>{
                     </li>
                     <li className="line-height pt-3">
                        <a href="#" className="search-toggle iq-waves-effect d-flex align-items-center">
-                          <img src="images/user/default_user.png" className="img-fluid rounded-circle mr-3" alt="user"/>
+                          <img src="http://localhost:3000/images/user/default_user.png" className="img-fluid rounded-circle mr-3" alt="user"/>
                           <div className="caption">
                              <h6 className="mb-1 line-height">Nguyễn Thanh Hoàng</h6>
                              <p className="mb-0 text-primary">Tài Khoản</p>

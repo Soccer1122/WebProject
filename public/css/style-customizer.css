@@ -224,3 +224,9 @@ Design and Developed by: iqonicthemes.in
 .iq-colorbox ul li:nth-child(20) {
     margin-right: 0px;
 }
+.star-icon-light {
+    color: yellow;
+  }
+  .star-icon-dark {
+    color: gray; 
+  }

@@ -215,7 +215,7 @@ a:hover { text-decoration: none; }
 .iq-social-media li a:hover { text-decoration: none; }
 .page-content .form-control::placeholder { color: #f5fffe; opacity: 1 }
 .page-content select.form-control:focus::-ms-value { color: #fafafb; background-color: #fff }
-.page-content .form-control { color: #d9d9d9; }
+.page-content .form-control { color: #000; }
 
 /*--------------------------*/
 .social-container { margin: 20px 0; }

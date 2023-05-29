@@ -8,19 +8,15 @@ import Book from "./components/book";
 import SignUp from "./components/sign-up";
 import Admin from "./components/admin";
 import Header from "./components/header";
-function App() {
+const App  =()=> {
+  console.log(localStorage)
   return (
     <div className="App">
-      <link rel="shortcut icon" href="images/favicon.ico" />
-      <link rel="stylesheet" href="css/bootstrap.min.css" />
-      <link rel="stylesheet" href="css/typography.css" />
-      <link rel="stylesheet" href="css/style.css" />
-      <link rel="stylesheet" href="css/responsive.css" />
       <Routes>
         <Route element={<Header/>}/>
-        <Route path="/" element={<SignIn />} />
-        <Route path="/home" element={<Home/>} />
-        <Route path="/home/:id" element={<Book/>}/>
+        <Route path="/sign-in" element={<SignIn />} />
+        <Route path="/" element={<Home/>} />
+        <Route path="/book/:id" element={<Book/>}/>
         <Route path="/sign-up" element={<SignUp/>}/>
         <Route path="/admin" element={<Admin/>}/> 
       </Routes>
