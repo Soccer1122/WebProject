@@ -30,6 +30,7 @@ const Home = (props) => {
   };
   const onAddToCartClick = (id) => {
     if (isLoggedIn === true) {
+      if(window.confirm("Bạn có chắc chắn muốn thêm sách này vào giỏ hàng")){
       console.log(quantity);
       let cart;
       if (typeof quantity === "number") {
@@ -69,6 +70,7 @@ const Home = (props) => {
         .catch((error) => {
           console.log(error); // Xử lý lỗi
         });
+      }
     } else {
       setShowModal(true);
     }
@@ -96,8 +98,8 @@ const Home = (props) => {
                       Trang chủ
                     </span>
                   </div>
-                </a>
-              </div>
+                </a>             
+              </div>            
             </div>
             <div className="navbar-breadcrumb"></div>
             <div className="iq-search-bar">
@@ -145,19 +147,28 @@ const Home = (props) => {
                   </li>
                 )}
                 <li className="nav-item nav-icon dropdown">
-                  <a
-                    href="#"
+                {isLoggedIn ? (
+                  <Link
+                    to={`/cart/${JSON.parse(localStorage.getItem("user")).id}`}
                     className="search-toggle iq-waves-effect text-gray rounded"
                   >
                     <i className="ri-shopping-cart-2-line"></i>
                     <span className="badge badge-danger count-cart rounded-circle">
-                      2
+                      
                     </span>
-                  </a>
+                  </Link>
+                ):(
+                  <Link
+                  to="/sign-in"                  
+                    className="search-toggle iq-waves-effect text-gray rounded"
+                  >
+                    <i className="ri-shopping-cart-2-line"></i>              
+                  </Link>
+                )}
                 </li>
                 <li className="line-height pt-3">
-                  <a
-                    href="#"
+                {isLoggedIn ? (<Link
+                    to="#"
                     className="search-toggle iq-waves-effect d-flex align-items-center"
                   >
                     <img
@@ -166,10 +177,24 @@ const Home = (props) => {
                       alt="user"
                     />
                     <div className="caption">
-                      <h6 className="mb-1 line-height">Nguyễn Thanh Hoàng</h6>
-                      <p className="mb-0 text-primary">Tài Khoản</p>
+                      <h6 className="mb-1 line-height">{JSON.parse(localStorage.getItem("user")).name}</h6>
                     </div>
-                  </a>
+                  </Link>
+                ):(
+                  <Link
+                    to="/sign-in"
+                    className="search-toggle iq-waves-effect d-flex align-items-center"
+                  >
+                    <img
+                      src="http://localhost:3000/images/user/default_user.png"
+                      className="img-fluid rounded-circle mr-3"
+                      alt="user"
+                    />
+                    <div className="caption">
+                      <h6 className="mb-1 line-height">Bạn đang chưa đăng nhập</h6>
+                    </div>
+                  </Link>
+                )}
                 </li>
               </ul>
             </div>

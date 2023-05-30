@@ -77,6 +77,7 @@ const Book = (props) => {
   }, [id]);
   const onAddToCartClick = () => {
     if (isLoggedIn === true) {
+      if(window.confirm("Bạn có chắc chắn muốn thêm sách này vào giỏ hàng")){
       console.log(quantity);
       let cart;
       if (typeof quantity === "number") {
@@ -116,6 +117,7 @@ const Book = (props) => {
         .catch((error) => {
           console.log(error); // Xử lý lỗi
         });
+      }
     } else {
       setShowModal(true);
     }
@@ -168,13 +170,23 @@ const Book = (props) => {
             >
               <ul className="navbar-nav ml-auto navbar-list">
                 {isLoggedIn ? (
-                  <div />
+                   <li className="" style={{padding :"0", display: "flex"}}>
+                  <Link
+                  to="/sign-in"
+                  className="search-toggle iq-waves-effect d-flex align-items-center"
+                  style={{alignItems: "center"}}
+                  onClick={()=>{localStorage.removeItem('user')} }
+                >
+                  <i className="ri-login-line mr-2"></i>
+                  <span>Đăng xuất</span>
+                </Link>
+                </li>
                 ) : (
-                  <li className="" style={{ padding: "0", display: "flex" }}>
+                  <li className="" style={{padding :"0", display: "flex"}}>
                     <Link
                       to="/sign-in"
                       className="search-toggle iq-waves-effect d-flex align-items-center"
-                      style={{ alignItems: "center" }}
+                      style={{alignItems: "center"}}
                     >
                       <i className="ri-login-line mr-2"></i>
                       <span>Đăng nhập</span>
@@ -182,19 +194,26 @@ const Book = (props) => {
                   </li>
                 )}
                 <li className="nav-item nav-icon dropdown">
-                  <a
-                    href="#"
+                {isLoggedIn ? (
+                  <Link
+                    to={`/cart/${JSON.parse(localStorage.getItem("user")).id}`}
                     className="search-toggle iq-waves-effect text-gray rounded"
                   >
                     <i className="ri-shopping-cart-2-line"></i>
-                    <span className="badge badge-danger count-cart rounded-circle">
-                      2
-                    </span>
+                    
+                  </Link>
+                ):(
+                  <a                   
+                    className="search-toggle iq-waves-effect text-gray rounded"
+                  >
+                    <i className="ri-shopping-cart-2-line"></i>
+                    
                   </a>
+                )}
                 </li>
-                <li className="line-height pt-3">
-                  <a
-                    href="#"
+                <li className="line-height pt-3">                  
+                {isLoggedIn ? (<Link
+                    to="#"
                     className="search-toggle iq-waves-effect d-flex align-items-center"
                   >
                     <img
@@ -203,9 +222,24 @@ const Book = (props) => {
                       alt="user"
                     />
                     <div className="caption">
-                      <h6 className="mb-1 line-height">Nguyễn Thanh Hoàng</h6>
+                      <h6 className="mb-1 line-height">{JSON.parse(localStorage.getItem("user")).name}</h6>
                     </div>
-                  </a>
+                  </Link>
+                ):(
+                  <Link
+                    to="/sign-in"
+                    className="search-toggle iq-waves-effect d-flex align-items-center"
+                  >
+                    <img
+                      src="http://localhost:3000/images/user/default_user.png"
+                      className="img-fluid rounded-circle mr-3"
+                      alt="user"
+                    />
+                    <div className="caption">
+                      <h6 className="mb-1 line-height">Bạn đang chưa đăng nhập</h6>
+                    </div>
+                  </Link>
+                )}
                 </li>
               </ul>
             </div>

@@ -8,6 +8,7 @@ import Book from "./components/book";
 import SignUp from "./components/sign-up";
 import Admin from "./components/admin";
 import Header from "./components/header";
+import Cart from "./components/cart";
 const App  =()=> {
   console.log(localStorage)
   return (
@@ -19,6 +20,7 @@ const App  =()=> {
         <Route path="/book/:id" element={<Book/>}/>
         <Route path="/sign-up" element={<SignUp/>}/>
         <Route path="/admin" element={<Admin/>}/> 
+        <Route path="/cart/:id" element={<Cart/>}/>
       </Routes>
       <Footer/>
     </div>
