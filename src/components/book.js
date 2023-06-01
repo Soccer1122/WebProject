@@ -15,43 +15,51 @@ const Book = (props) => {
   const [comments, setComments] = useState([]);
   const [content, setContent] = useState("");
   const [rating, setRating] = useState(0);
-
+  const [arvRating, setArvRating] = useState(0);
   const handleSubmit = () => {
+    /* tạo bình luận*/
     if (isLoggedIn === true) {
-      if(content!==""){
-      let comment;
-      comment = {
-        content: content,
-        author: JSON.parse(localStorage.getItem("user")).name,
-        rating: rating,
-        bookid: parseInt(id),
-      };
-      fetch(`http://localhost:8080/addComment/${parseInt(JSON.parse(localStorage.getItem("user")).id)}`, {
-        method: "POST",
-        mode: "cors",
-        body: JSON.stringify(comment),
-        headers: {
-          "Content-Type": "application/json",
-        },
-      })
-        .then((response) => {
-          if (response.ok) {
-            return "thành công";
-          } else {
-            throw new Error("Something went wrong");
-          }
-        })
-        .then((data) => {
-          console.log(data);
-          setContent("");
-          setRating(0);
-          window.location.reload();
-        })
-        .catch((err) => console.log(err));
-    } else{
-      window.alert("Nội dung đánh giá không được bỏ trống")
-    }
-  }else {
+      if (window.confirm("Bạn có chắc chắn muốn thêm đánh giá này")) {
+        if (content !== "") {
+          let comment;
+          comment = {
+            content: content,
+            author: JSON.parse(localStorage.getItem("user")).name,
+            rating: rating,
+            bookid: parseInt(id),
+          };
+          fetch(
+            `http://localhost:8080/addComment/${parseInt(
+              JSON.parse(localStorage.getItem("user")).id
+            )}`,
+            {
+              method: "POST",
+              mode: "cors",
+              body: JSON.stringify(comment),
+              headers: {
+                "Content-Type": "application/json",
+              },
+            }
+          )
+            .then((response) => {
+              if (response.ok) {
+                return "thành công";
+              } else {
+                throw new Error("Something went wrong");
+              }
+            })
+            .then((data) => {
+              console.log(data);
+              setContent("");
+              setRating(0);
+              window.location.reload();
+            })
+            .catch((err) => console.log(err));
+        } else {
+          window.alert("Nội dung đánh giá không được bỏ trống");
+        }
+      }
+    } else {
       setShowModal(true);
     }
   };
@@ -77,46 +85,46 @@ const Book = (props) => {
   }, [id]);
   const onAddToCartClick = () => {
     if (isLoggedIn === true) {
-      if(window.confirm("Bạn có chắc chắn muốn thêm sách này vào giỏ hàng")){
-      console.log(quantity);
-      let cart;
-      if (typeof quantity === "number") {
-        cart = {
-          userid: parseInt(JSON.parse(localStorage.getItem("user")).id),
-          bookid: parseInt(id),
-          quantity: quantity,
-        };
-      } else {
-        cart = {
-          userid: parseInt(JSON.parse(localStorage.getItem("user")).id),
-          bookid: parseInt(id),
-          quantity: parseInt(quantity.quantity),
-        };
-      }
-      console.log(typeof quantity);
-      console.log(JSON.stringify(cart));
-      fetch(`http://localhost:8080/addToCart`, {
-        method: "POST",
-        mode: "cors",
-        body: JSON.stringify(cart),
-        headers: {
-          "Content-Type": "application/json",
-        },
-      })
-        .then((response) => {
-          if (response.ok) {
-            return "thành công";
-          } else {
-            throw new Error("Something went wrong");
-          }
+      if (window.confirm("Bạn có chắc chắn muốn thêm sách này vào giỏ hàng")) {
+        console.log(quantity);
+        let cart;
+        if (typeof quantity === "number") {
+          cart = {
+            userid: parseInt(JSON.parse(localStorage.getItem("user")).id),
+            bookid: parseInt(id),
+            quantity: quantity,
+          };
+        } else {
+          cart = {
+            userid: parseInt(JSON.parse(localStorage.getItem("user")).id),
+            bookid: parseInt(id),
+            quantity: parseInt(quantity.quantity),
+          };
+        }
+        console.log(typeof quantity);
+        console.log(JSON.stringify(cart));
+        fetch(`http://localhost:8080/addToCart`, {
+          method: "POST",
+          mode: "cors",
+          body: JSON.stringify(cart),
+          headers: {
+            "Content-Type": "application/json",
+          },
         })
-        .then((data) => {
-          console.log(data); // Xử lý kết quả từ server
-          window.location.reload();
-        })
-        .catch((error) => {
-          console.log(error); // Xử lý lỗi
-        });
+          .then((response) => {
+            if (response.ok) {
+              return "thành công";
+            } else {
+              throw new Error("Something went wrong");
+            }
+          })
+          .then((data) => {
+            console.log(data); // Xử lý kết quả từ server
+            window.location.reload();
+          })
+          .catch((error) => {
+            console.log(error); // Xử lý lỗi
+          });
       }
     } else {
       setShowModal(true);
@@ -129,6 +137,13 @@ const Book = (props) => {
   const handleRatingChange = (value) => {
     setRating(value);
   };
+  useEffect(() => {
+    let total = 0;
+    comments.forEach((comment) => {
+      total += comment.rating;
+    });
+    setArvRating(Math.ceil(total / comments.length));
+  }, [comments]);
   return (
     <div>
       <SideBar />
@@ -170,23 +185,25 @@ const Book = (props) => {
             >
               <ul className="navbar-nav ml-auto navbar-list">
                 {isLoggedIn ? (
-                   <li className="" style={{padding :"0", display: "flex"}}>
-                  <Link
-                  to="/sign-in"
-                  className="search-toggle iq-waves-effect d-flex align-items-center"
-                  style={{alignItems: "center"}}
-                  onClick={()=>{localStorage.removeItem('user')} }
-                >
-                  <i className="ri-login-line mr-2"></i>
-                  <span>Đăng xuất</span>
-                </Link>
-                </li>
-                ) : (
-                  <li className="" style={{padding :"0", display: "flex"}}>
+                  <li className="" style={{ padding: "0", display: "flex" }}>
                     <Link
                       to="/sign-in"
                       className="search-toggle iq-waves-effect d-flex align-items-center"
-                      style={{alignItems: "center"}}
+                      style={{ alignItems: "center" }}
+                      onClick={() => {
+                        localStorage.removeItem("user");
+                      }}
+                    >
+                      <i className="ri-login-line mr-2"></i>
+                      <span>Đăng xuất</span>
+                    </Link>
+                  </li>
+                ) : (
+                  <li className="" style={{ padding: "0", display: "flex" }}>
+                    <Link
+                      to="/sign-in"
+                      className="search-toggle iq-waves-effect d-flex align-items-center"
+                      style={{ alignItems: "center" }}
                     >
                       <i className="ri-login-line mr-2"></i>
                       <span>Đăng nhập</span>
@@ -194,26 +211,27 @@ const Book = (props) => {
                   </li>
                 )}
                 <li className="nav-item nav-icon dropdown">
-                {isLoggedIn ? (
-                  <Link
-                    to={`/cart/${JSON.parse(localStorage.getItem("user")).id}`}
-                    className="search-toggle iq-waves-effect text-gray rounded"
-                  >
-                    <i className="ri-shopping-cart-2-line"></i>
-                    
-                  </Link>
-                ):(
-                  <a                   
-                    className="search-toggle iq-waves-effect text-gray rounded"
-                  >
-                    <i className="ri-shopping-cart-2-line"></i>
-                    
-                  </a>
-                )}
+                  {isLoggedIn ? (
+                    <Link
+                      to={`/cart/${
+                        JSON.parse(localStorage.getItem("user")).id
+                      }`}
+                      className="search-toggle iq-waves-effect text-gray rounded"
+                    >
+                      <i className="ri-shopping-cart-2-line"></i>
+                    </Link>
+                  ) : (
+                    <a className="search-toggle iq-waves-effect text-gray rounded">
+                      <i className="ri-shopping-cart-2-line"></i>
+                    </a>
+                  )}
                 </li>
-                <li className="line-height pt-3">                  
-                {isLoggedIn ? (<Link
-                    to="#"
+                <li className="line-height pt-3">
+                  {isLoggedIn ? (
+                    <Link
+                    to={`/history/${
+                      JSON.parse(localStorage.getItem("user")).id
+                    }`}
                     className="search-toggle iq-waves-effect d-flex align-items-center"
                   >
                     <img
@@ -222,24 +240,29 @@ const Book = (props) => {
                       alt="user"
                     />
                     <div className="caption">
-                      <h6 className="mb-1 line-height">{JSON.parse(localStorage.getItem("user")).name}</h6>
+                      <h6 className="mb-1 line-height">
+                        {JSON.parse(localStorage.getItem("user")).name}
+                      </h6>
+                      Lịch sử mua hàng
                     </div>
                   </Link>
-                ):(
-                  <Link
-                    to="/sign-in"
-                    className="search-toggle iq-waves-effect d-flex align-items-center"
-                  >
-                    <img
-                      src="http://localhost:3000/images/user/default_user.png"
-                      className="img-fluid rounded-circle mr-3"
-                      alt="user"
-                    />
-                    <div className="caption">
-                      <h6 className="mb-1 line-height">Bạn đang chưa đăng nhập</h6>
-                    </div>
-                  </Link>
-                )}
+                  ) : (
+                    <Link
+                      to="/sign-in"
+                      className="search-toggle iq-waves-effect d-flex align-items-center"
+                    >
+                      <img
+                        src="http://localhost:3000/images/user/default_user.png"
+                        className="img-fluid rounded-circle mr-3"
+                        alt="user"
+                      />
+                      <div className="caption">
+                        <h6 className="mb-1 line-height">
+                          Bạn đang chưa đăng nhập
+                        </h6>
+                      </div>
+                    </Link>
+                  )}
                 </li>
               </ul>
             </div>
@@ -283,12 +306,20 @@ const Book = (props) => {
                             </span>
                           </h3>
                           <div className="mb-3 d-block">
-                            <span className="font-size-20 text-warning">
-                              <i className="fa fa-star mr-1"></i>
-                              <i className="fa fa-star mr-1"></i>
-                              <i className="fa fa-star mr-1"></i>
-                              <i className="fa fa-star mr-1"></i>
-                              <i className="fa fa-star"></i>
+                            <span className="font-size-15 text-warning">
+                              {[1, 2, 3, 4, 5].map((value) => (
+                                <label key={value} className="star">
+                                  <span
+                                    className={`icon ${
+                                      value <= arvRating
+                                        ? "text-warning"
+                                        : "star-icon-dark"
+                                    }`}
+                                  >
+                                    <FontAwesomeIcon icon={faStar} />
+                                  </span>
+                                </label>
+                              ))}
                             </span>
                           </div>
                           <span className="text-dark mb-4 pb-4 iq-border-bottom d-block">
@@ -330,56 +361,52 @@ const Book = (props) => {
                           <br />
                           <h3>Đánh giá của bạn</h3>
 
-                          
-                           
-                              <div className="row">                           
-                                    <textarea
-                                      id="content"
-                                      className="form-control"
-                                      value={content}
-                                      onChange={(e) =>
-                                      setContent(e.target.value)
-                                      }
-                                      lang="vi-VN"                                     
-                                    ></textarea>
-                              </div>
+                          <div className="row">
+                            <textarea
+                              id="content"
+                              className="form-control"
+                              value={content}
+                              onChange={(e) => setContent(e.target.value)}
+                              lang="vi-VN"
+                            ></textarea>
+                          </div>
 
-                              <div className="form-group">
-                                <label htmlFor="rating">
-                                  Bạn thấy sách thế nào
+                          <div className="form-group">
+                            <label htmlFor="rating">
+                              Bạn thấy sách thế nào
+                            </label>
+
+                            <div className="rating">
+                              {[1, 2, 3, 4, 5].map((value) => (
+                                <label key={value} className="star">
+                                  <input
+                                    type="radio"
+                                    name="rating"
+                                    value={value}
+                                    checked={value === rating}
+                                    onChange={() => handleRatingChange(value)}
+                                    style={{ appearance: "none" }}
+                                  />
+                                  <span
+                                    className={`icon ${
+                                      value <= rating
+                                        ? "text-warning"
+                                        : "star-icon-dark"
+                                    }`}
+                                  >
+                                    <FontAwesomeIcon icon={faStar} />
+                                  </span>
                                 </label>
+                              ))}
+                            </div>
+                          </div>
 
-                                <div className="rating">
-                                  {[1, 2, 3, 4, 5].map((value) => (
-                                    <label key={value} className="star">
-                                      <input
-                                        type="radio"
-                                        name="rating"
-                                        value={value}
-                                        checked={value === rating}
-                                        onChange={() =>
-                                          handleRatingChange(value)
-                                        }
-                                        style={{ appearance: "none" }}
-                                      />
-                                      <span
-                                        className={`icon ${
-                                          value <= rating
-                                            ? "text-warning"
-                                            : "star-icon-dark"
-                                        }`}
-                                      >
-                                        <FontAwesomeIcon icon={faStar} />
-                                      </span>
-                                    </label>
-                                  ))}
-                                </div>
-                              </div>
-                         
-
-                            <button onClick={handleSubmit} className="btn btn-primary">
-                              Thêm nhận xét
-                            </button>
+                          <button
+                            onClick={handleSubmit}
+                            className="btn btn-primary"
+                          >
+                            Thêm nhận xét
+                          </button>
                         </div>
                       </div>
                     </div>
@@ -392,41 +419,46 @@ const Book = (props) => {
         <div style={{ textAlign: "left" }} className="col-md-12">
           <h2> Đánh giá về sách này</h2>
           <br />
-          {comments.length===0 ? (
-                  <Card style={{ height: "auto" }}>
-                  <Card.Body>                   
-                    <h2 style={{textAlign:"center"}}>Chưa có đánh giá về sách này</h2>
-                  </Card.Body>
-                </Card>
-                ) : (
-          <div>
-          {comments.slice().reverse().map((comment) => (
-            <Card style={{ height: "auto"}}>
+          {comments.length === 0 ? (
+            <Card style={{ height: "auto" }}>
               <Card.Body>
-                <Card.Title style={{ fontSize: "16px" }}>
-                  {comment.author}
-                </Card.Title>
-                <span className="font-size-15 text-warning">
-                {[1, 2, 3, 4, 5].map((value) => (
-                                    <label key={value} className="star">                                   
-                                      <span
-                                        className={`icon ${
-                                          value <= comment.rating
-                                            ? "text-warning"
-                                            : "star-icon-dark"
-                                        }`}
-                                      >
-                                        <FontAwesomeIcon icon={faStar} />
-                                      </span>
-                                    </label>
-                                  ))}
-                </span>
-                <p style={{ fontSize: "16px" }}>{comment.content} </p>
+                <h2 style={{ textAlign: "center" }}>
+                  Chưa có đánh giá về sách này
+                </h2>
               </Card.Body>
             </Card>
-          ))}
-          </div>
-                )}
+          ) : (
+            <div>
+              {comments
+                .slice()
+                .reverse()
+                .map((comment) => (
+                  <Card style={{ height: "auto" }}>
+                    <Card.Body>
+                      <Card.Title style={{ fontSize: "16px" }}>
+                        {comment.author}
+                      </Card.Title>
+                      <span className="font-size-15 text-warning">
+                        {[1, 2, 3, 4, 5].map((value) => (
+                          <label key={value} className="star">
+                            <span
+                              className={`icon ${
+                                value <= comment.rating
+                                  ? "text-warning"
+                                  : "star-icon-dark"
+                              }`}
+                            >
+                              <FontAwesomeIcon icon={faStar} />
+                            </span>
+                          </label>
+                        ))}
+                      </span>
+                      <p style={{ fontSize: "16px" }}>{comment.content} </p>
+                    </Card.Body>
+                  </Card>
+                ))}
+            </div>
+          )}
         </div>
       </div>
 

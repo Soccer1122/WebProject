@@ -9,22 +9,26 @@ import SignUp from "./components/sign-up";
 import Admin from "./components/admin";
 import Header from "./components/header";
 import Cart from "./components/cart";
-const App  =()=> {
-  console.log(localStorage)
+import Checkout from "./components/checkout";
+import History from "./components/history";
+const App = () => {
+  console.log(localStorage);
   return (
     <div className="App">
       <Routes>
-        <Route element={<Header/>}/>
+        <Route element={<Header />} />
         <Route path="/sign-in" element={<SignIn />} />
-        <Route path="/" element={<Home/>} />
-        <Route path="/book/:id" element={<Book/>}/>
-        <Route path="/sign-up" element={<SignUp/>}/>
-        <Route path="/admin" element={<Admin/>}/> 
-        <Route path="/cart/:id" element={<Cart/>}/>
+        <Route path="/" element={<Home />} />
+        <Route path="/book/:id" element={<Book />} />
+        <Route path="/sign-up" element={<SignUp />} />
+        <Route path="/admin" element={<Admin />} />
+        <Route path="/cart/:id" element={<Cart />} />
+        <Route path="/checkout" element ={<Checkout/>}></Route>
+        <Route path="/history/:id" element={<History />} />
       </Routes>
-      <Footer/>
+      <Footer />
     </div>
   );
-}
+};
 
 export default App;

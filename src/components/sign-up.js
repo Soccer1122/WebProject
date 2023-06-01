@@ -1,4 +1,3 @@
-import axios from "axios";
 import React, { useState } from "react";
 import { Modal, Button } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
@@ -11,59 +10,56 @@ const SignUp = () => {
   const [errorName, setErrorName] = useState("");
   const [errorEmail, setErrorEmail] = useState("");
   const [errorPass, setErrorPass] = useState("");
-const [response, SetResponse] = useState("");
-const signUpSubmit = ()=> {
-  if(name !== "" && email !== "" && password !== ""){
-  let user;
-        user = {
-          name: name,
-          password: password,
-          email: email,
-          role: 'user'
-        };
+  const [response, SetResponse] = useState("");
+  const signUpSubmit = () => {
+    if (name !== "" && email !== "" && password !== "") {
+      let user;
+      user = {
+        name: name,
+        password: password,
+        email: email,
+        role: "user",
+      };
       fetch(`http://localhost:8080/sign-up`, {
         method: "POST",
         mode: "cors",
         body: JSON.stringify(user),
-            headers: {
+        headers: {
           "Content-Type": "application/json",
-            },
+        },
       })
         .then((response) => {
-          console.log(response)
+          console.log(response);
           if (response.ok) {
-            return "thành công";           
-    } else {
-            return "thất bại";    
-      }
+            return "thành công";
+          } else {
+            return "thất bại";
+          }
         })
         .then((data) => {
-          console.log(data)
-          setShowModal(true)
-          SetResponse(data)
+          console.log(data);
+          setShowModal(true);
+          SetResponse(data);
         })
         .catch((error) => {
-          console.log(error); 
-        });    
+          console.log(error);
+        });
+    } else {
+      if (email === "") {
+        setErrorEmail("Vui lòng nhập email");
       }
-      else {
-        if (email === "") {
-          setErrorEmail("Vui lòng nhập email");
-        }
-        if (password === "") {
-          setErrorPass("Vui lòng nhập password");
-        }
-        if (name === "") {
-          setErrorName("Vui lòng nhập tên");
-        }
+      if (password === "") {
+        setErrorPass("Vui lòng nhập password");
       }
-}
+      if (name === "") {
+        setErrorName("Vui lòng nhập tên");
+      }
+    }
+  };
   const handleModalClose = () => {
     setShowModal(false);
-  if(response==="thành công")
-  navigate("/sign-in");
-  else{
-
+    if (response === "thành công") navigate("/sign-in");
+    else {
     }
   };
   return (
@@ -158,14 +154,16 @@ const signUpSubmit = ()=> {
         <Modal.Body>
           {response === "thành công" ? (
             <div>
-              <span style={{color:"green"}}>
-              Đăng kí thành công! Nhấn OK để chuyển tới trang đăng nhập
-                </span>
-                </div>
+              <span style={{ color: "green" }}>
+                Đăng kí thành công! Nhấn OK để chuyển tới trang đăng nhập
+              </span>
+            </div>
           ) : (
             <div>
-              <span style={{color:"red"}}>Đăng kí không thành công! Email của bạn đã tồn tại hãy sử dụng
-              email khác!</span>          
+              <span style={{ color: "red" }}>
+                Đăng kí không thành công! Email của bạn đã tồn tại hãy sử dụng
+                email khác!
+              </span>
             </div>
           )}
         </Modal.Body>

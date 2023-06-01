@@ -1,27 +1,57 @@
 import React, { useEffect, useState } from "react";
 import SideBar from "./sidebar";
-
+import { Link } from "react-router-dom";
 const Cart = () => {
   const id = JSON.parse(localStorage.getItem("user")).id;
   const [carts, setCarts] = useState([]);
   const [books, setBooks] = useState([]);
   const [totalAmount, setTotalAmount] = useState(0);
+  localStorage.setItem("totalAmount", JSON.stringify(totalAmount));
+  const updateCartQuantity = async (cartId, newQuantity) => {
+    try {
+      const response = await fetch(
+        `http://localhost:8080/cart/update/${cartId}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: parseInt(newQuantity),
+        }
+      );
+      if (response.ok) {
+        setCarts((prevCarts) => {
+          return prevCarts.map((cart) => {
+            if (cart.id === cartId) {
+              return { ...cart, quantity: newQuantity };
+            }
+            return cart;
+          });
+        });
+        window.location.reload();
+        console.log("Cập nhật số lượng thành công");
+      } else {
+        console.log("Cập nhật số lượng không thành công");
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
   const DeleteCart = (cardId) => {
-    if (window.confirm("Bạn có chắc chắn muốn xóa sách này ra khỏi giỏ hàng?")) {
-      // Call the delete API endpoint and update the state
+    if (
+      window.confirm("Bạn có chắc chắn muốn xóa sách này ra khỏi giỏ hàng?")
+    ) {
       fetch(`http://localhost:8080/cart/delete/${cardId}`, { method: "DELETE" })
         .then((response) => {
           if (response.ok) {
             // Update the state with the remaining books
-            setCarts(carts.filter((cart) => cart.id !== cardId));
+            window.location.reload();
+            
           }
         })
         .catch((err) => console.log(err));
     }
   };
-console.log(carts)
-console.log(carts.length)
-console.log(books)
   useEffect(() => {
     const fetchCarts = async () => {
       try {
@@ -52,14 +82,12 @@ console.log(books)
   useEffect(() => {
     let total = 0;
     books.forEach((book, index1) => {
-        carts.forEach((cart, index2) => {
-            if(book.id===cart.bookid)
-            total += book.price*cart.quantity;
-     
-        });
+      carts.forEach((cart, index2) => {
+        if (book.id === cart.bookid) total += book.price * cart.quantity;
+      });
     });
     setTotalAmount(total);
-  }, [books, carts]);
+  }, [books]);
   const formatCurrency = (value) => {
     const formatter = new Intl.NumberFormat("vi-VN", {
       style: "currency",
@@ -108,21 +136,24 @@ console.log(books)
             >
               <ul className="navbar-nav ml-auto navbar-list">
                 <li className="line-height pt-3">
-                  <a
-                    href="#"
-                    className="search-toggle iq-waves-effect d-flex align-items-center"
-                  >
-                    <img
-                      src="http://localhost:3000/images/user/default_user.png"
-                      className="img-fluid rounded-circle mr-3"
-                      alt="user"
-                    />
-                    <div className="caption">
-                      <h6 className="mb-1 line-height">
-                        {JSON.parse(localStorage.getItem("user")).name}
-                      </h6>
-                    </div>
-                  </a>
+                <Link
+                      to={`/history/${
+                        JSON.parse(localStorage.getItem("user")).id
+                      }`}
+                      className="search-toggle iq-waves-effect d-flex align-items-center"
+                    >
+                      <img
+                        src="http://localhost:3000/images/user/default_user.png"
+                        className="img-fluid rounded-circle mr-3"
+                        alt="user"
+                      />
+                      <div className="caption">
+                        <h6 className="mb-1 line-height">
+                          {JSON.parse(localStorage.getItem("user")).name}
+                        </h6>
+                        Lịch sử mua hàng
+                      </div>
+                    </Link>
                 </li>
               </ul>
             </div>
@@ -142,19 +173,29 @@ console.log(books)
                       <div className="iq-header-title">
                         <h4 className="card-title">Giỏ hàng</h4>
                       </div>
-                      <div className="iq-header-title">
-                        <button className="btn btn-primary"> Cập nhập lại giỏ hàng</button>
-                      </div>
                     </div>
                     <div className="iq-card-body">
-                      <ul className="list-inline p-0 m-0" >
+                      <ul className="list-inline p-0 m-0">
                         {/* san pham*/}
-                        {carts.map((cart) => {
+
+                        {carts.length!==0?(
+                        carts.map((cart) => {
                           const book = books.find(
                             (book) => book.id === cart.bookid
-                          );    
+                          );
+                          const handleQuantityChange = (
+                            cartId,
+                            newQuantity                           
+                          ) => {
+                            // Gọi hàm updateCartQuantity để cập nhật số lượng trên server
+                            if(newQuantity>=1){
+                            updateCartQuantity(cartId, newQuantity);
+                            }else{
+                              DeleteCart(cartId)
+                            }
+                          };
                           return (
-                            <li className="checkout-product" key={cart.id} >
+                            <li className="checkout-product" key={cart.id}>
                               {book && (
                                 <div className="row align-items-center">
                                   <div className="col-sm-2">
@@ -162,7 +203,10 @@ console.log(books)
                                       <a href={`/book/${cart.bookid}`}>
                                         <img
                                           className="img-fluid rounded"
-                                          src={"http://localhost:3000/"+book.image}
+                                          src={
+                                            "http://localhost:3000/" +
+                                            book.image
+                                          }
                                           alt=""
                                         />
                                       </a>
@@ -186,16 +230,30 @@ console.log(books)
                                               type="button"
                                               className="fa fa-minus qty-btn"
                                               id="btn-minus"
+                                              onClick={() =>
+                                                handleQuantityChange(
+                                                  cart.id,
+                                                  cart.quantity - 1
+                                                )
+                                              }
                                             ></button>
+
                                             <input
                                               type="text"
                                               id="quantity"
                                               defaultValue={cart.quantity}
+                                              readOnly
                                             />
                                             <button
                                               type="button"
                                               className="fa fa-plus qty-btn"
                                               id="btn-plus"
+                                              onClick={() =>
+                                                handleQuantityChange(
+                                                  cart.id,
+                                                  cart.quantity + 1
+                                                )
+                                              }
                                             ></button>
                                           </div>
                                           <div className="col-sm-5 col-md-6">
@@ -205,11 +263,11 @@ console.log(books)
                                           </div>
                                         </div>
                                       </div>
-                                      <div className="col-sm-2" >
-                                        <button 
+                                      <div className="col-sm-2">
+                                        <button
                                           className="text-dark font-size-20 btn btn-outline-dar"
                                           onClick={() => DeleteCart(cart.id)}
-                                          >
+                                        >
                                           <i className="ri-delete-bin-7-fill"></i>
                                         </button>
                                       </div>
@@ -219,7 +277,9 @@ console.log(books)
                               )}
                             </li>
                           );
-                        })}
+                        })):(
+                          <h4> Giỏ hàng của bạn hiện đang trống</h4>
+                        )}
                       </ul>
                     </div>
                   </div>
@@ -237,7 +297,7 @@ console.log(books)
                       </div>
                       <div className="d-flex justify-content-between mb-1">
                         <span>Thuế VAT (5%)</span>
-                        <span>{formatCurrency(totalAmount*5/100)}</span>
+                        <span>{formatCurrency((totalAmount * 5) / 100)}</span>
                       </div>
                       <div className="d-flex justify-content-between">
                         <span>Phí vận chuyển</span>
@@ -249,16 +309,29 @@ console.log(books)
                           <strong>Tổng</strong>
                         </span>
                         <span className="text-dark">
-                          <strong>{formatCurrency(totalAmount*105/100)}</strong>
+                          <strong>
+                            {formatCurrency((totalAmount * 105) / 100)}
+                          </strong>
                         </span>
                       </div>
-                      <a
+                      {carts.length===0?(
+                        <a                    
                         id="place-order"
-                        href=""
+                        href="/checkout"
                         className="btn btn-primary d-block mt-3 next"
+                        style={{pointerEvents: "none"}}
                       >
                         Đặt hàng
                       </a>
+                      )
+                      :(<a                    
+                        id="place-order"
+                        href="/checkout"
+                        className="btn btn-primary d-block mt-3 next"
+                      >
+                        Đặt hàng
+                      </a>)
+                      }  
                     </div>
                   </div>
                   <div className="iq-card ">

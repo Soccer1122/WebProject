@@ -584,7 +584,7 @@ button.banner-button { position: absolute; left: auto; right: 21%; bottom: 12px;
 .browse-bookcontent:hover .view-book,.search-bookcontent:hover .view-book,li:hover .image-overlap-shadow .view-book { opacity: 1; -webkit-transition: all 0.3s ease-out 0s; -moz-transition: all 0.3s ease-out 0s; -ms-transition: all 0.3s ease-out 0s; -o-transition: all 0.3s ease-out 0s; transition: all 0.3s ease-out 0s; }
 
 /* -------- CheckOut Page ---------- */
-.card-block { display: none; }
+.card-block { display: block; }
 .card-block.show { display: block; }
 .checkout-product-img { vertical-align: middle; max-height: 100px; max-width: 80px; display: inline-block; }
 .iq-checkout-policy ul li { border-bottom: 1px solid var(--iq-border); }
