@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import SideBar from "./sidebar";
+import Footer from "./footer";
 import { Link } from "react-router-dom";
 const Cart = () => {
   const id = JSON.parse(localStorage.getItem("user")).id;
@@ -366,6 +367,7 @@ const Cart = () => {
           </div>
         </div>
       </div>
+      <Footer/>
     </div>
   );
 };

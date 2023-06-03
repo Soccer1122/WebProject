@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import SideBar from "./sidebar";
+import Footer from "./footer";
 import { useNavigate } from "react-router-dom";
 import { Modal, Button } from "react-bootstrap";
 import { Link } from "react-router-dom";
@@ -139,6 +140,7 @@ const Home = (props) => {
                       style={{ alignItems: "center" }}
                       onClick={() => {
                         localStorage.removeItem("user");
+                        localStorage.removeItem("totalAmount");
                       }}
                     >
                       <i className="ri-login-line mr-2"></i>
@@ -357,6 +359,7 @@ const Home = (props) => {
           </Button>
         </Modal.Footer>
       </Modal>
+      <Footer/>
     </div>
   );
 };

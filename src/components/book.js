@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import SideBar from "./sidebar";
+import Footer from "./footer";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { Modal, Button, Card } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -287,7 +288,7 @@ const Book = (props) => {
                           <div className="row align-items-center">
                             <div className="col-9">
                               <img
-                                src={"http://localhost:3000/" + book.image}
+                                src={ book.image}
                                 className="img-fluid w-100 rounded"
                                 alt=""
                               />
@@ -481,6 +482,8 @@ const Book = (props) => {
           </Button>
         </Modal.Footer>
       </Modal>
+      <br/>
+      <Footer/>
     </div>
   );
 };

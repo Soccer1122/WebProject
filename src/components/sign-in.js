@@ -32,10 +32,14 @@ const SignIn = () => {
         // Kiểm tra xác thực thành công
         if (response.status === 200) {
           // Chuyển hướng đến trang chủ
+          if (response.data.data.role === "admin") {
+            localStorage.setItem("admin", JSON.stringify(response.data.data));
+            navigate("/admin");
+          }
+          else{
           localStorage.setItem("user", JSON.stringify(response.data.data));
-          if (response.data.data.role === "admin") navigate("/admin");
-          else 
           navigate("/");
+          }
         }
       } catch (error) {
         console.error("Đăng nhập thất bại:", error);

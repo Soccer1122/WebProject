@@ -37,6 +37,7 @@ const SideBar = () => {
                   href="/sign-in"
                   onClick={() => {
                     localStorage.removeItem("user");
+                    localStorage.removeItem("totalAmount");
                   }}
                 >
                   <i className="ri-book-line"></i> Đăng xuất{" "}

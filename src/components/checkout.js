@@ -2,7 +2,7 @@ import { useState } from "react";
 import SideBar from "./sidebar";
 import { Link, useNavigate } from "react-router-dom";
 import { Button, Modal } from "react-bootstrap";
-
+import Footer from "./footer";
 const Checkout = () => {
   const [name, setName] = useState("");
   const [address, setAddress] = useState("");
@@ -14,7 +14,6 @@ const Checkout = () => {
   const [addressError, setAddressError] = useState("");
   const [phoneError, setPhoneError] = useState("");
   const [cityError, setCityError] = useState("");
-  const [total, setTotal] = useState("");
   const [wardError, setWardError] = useState("");
   const [showModal, setShowModal] = useState(false);
   const [response, SetResponse] = useState("");
@@ -74,8 +73,9 @@ const Checkout = () => {
             .then((data) => {
               console.log(data);
               localStorage.removeItem("totalAmount");
-              setShowModal(true);
               SetResponse(data);
+              window.alert("Đặt hàng thành công bạn có thể tiếp tục mua hàng");
+              navigate("/")
             })
             .catch((error) => {
               console.log(error);
@@ -390,6 +390,7 @@ const Checkout = () => {
           </Button>
         </Modal.Footer>
       </Modal>
+      <Footer/>
     </div>
   );
 };

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import SideBar from "./sidebar";
-
+import Footer from "./footer";
 const History = () => {
   const id = JSON.parse(localStorage.getItem("user")).id;
   const [orderedItems, setOrderedItems] = useState([]);
@@ -318,6 +318,7 @@ const History = () => {
           </div>
         </div>
       </div>
+      <Footer/>
     </div>
   );
 };
