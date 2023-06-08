@@ -5,7 +5,7 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import { Modal, Button, Card } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faStar } from "@fortawesome/free-solid-svg-icons";
-const Book = (props) => {
+const Book = () => {
   const params = useParams();
   const [book, setBook] = useState({});
   const [quantity, setQuantity] = useState(1);
@@ -23,11 +23,13 @@ const Book = (props) => {
       if (window.confirm("Bạn có chắc chắn muốn thêm đánh giá này")) {
         if (content !== "") {
           let comment;
+          let time= new Date();
           comment = {
             content: content,
             author: JSON.parse(localStorage.getItem("user")).name,
             rating: rating,
             bookid: parseInt(id),
+            date: time.getDate()+'-'+(time.getMonth()+1)+'-'+time.getFullYear()
           };
           fetch(
             `http://localhost:8080/addComment/${parseInt(
@@ -121,7 +123,7 @@ const Book = (props) => {
           })
           .then((data) => {
             console.log(data); // Xử lý kết quả từ server
-            window.location.reload();
+            window.alert("Thêm vào giỏ hàng thành công")
           })
           .catch((error) => {
             console.log(error); // Xử lý lỗi
@@ -434,10 +436,11 @@ const Book = (props) => {
                 .slice()
                 .reverse()
                 .map((comment) => (
-                  <Card style={{ height: "auto" }}>
+                  <Card style={{ height: "auto" }} key={comment.id}>
                     <Card.Body>
-                      <Card.Title style={{ fontSize: "16px" }}>
-                        {comment.author}
+                      <Card.Title style={{ fontSize: "16px", textAlign:"right"}}>
+                        <span style={{textAlign:"left",float:"left"}}>{comment.author}</span>
+                       {comment.date}
                       </Card.Title>
                       <span className="font-size-15 text-warning">
                         {[1, 2, 3, 4, 5].map((value) => (

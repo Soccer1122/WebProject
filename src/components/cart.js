@@ -29,7 +29,7 @@ const Cart = () => {
             return cart;
           });
         });
-        window.location.reload();
+        window.location.reload()
         console.log("Cập nhật số lượng thành công");
       } else {
         console.log("Cập nhật số lượng không thành công");
@@ -46,7 +46,6 @@ const Cart = () => {
         .then((response) => {
           if (response.ok) {
             // Update the state with the remaining books
-            window.location.reload();
             
           }
         })
@@ -79,7 +78,7 @@ const Cart = () => {
 
     fetchCarts();
     fetchBooks();
-  }, [id]);
+  }, [carts]);
   useEffect(() => {
     let total = 0;
     books.forEach((book, index1) => {
@@ -205,7 +204,6 @@ const Cart = () => {
                                         <img
                                           className="img-fluid rounded"
                                           src={
-                                            "http://localhost:3000/" +
                                             book.image
                                           }
                                           alt=""

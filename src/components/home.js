@@ -19,7 +19,7 @@ const Home = (props) => {
       .then((response) => response.json())
       .then((data) => setBooks(data))
       .catch((err) => console.log(err));
-  }, []);
+  }, [books]);
   const filteredBooks = books.filter(
     (book) =>
       book.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -75,7 +75,7 @@ const Home = (props) => {
           })
           .then((data) => {
             console.log(data); // Xử lý kết quả từ server
-            window.location.reload();
+           window.alert("Thêm vào giỏ hàng thành công")
           })
           .catch((error) => {
             console.log(error); // Xử lý lỗi

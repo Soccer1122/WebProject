@@ -70,7 +70,7 @@ function Admin(props) {
                   </a>
                 </li>
                 <li>
-                  <a href="admin-category.html">
+                  <a href="/admin/order">
                     <i class="ri-record-circle-line"></i>Đơn hàng
                   </a>
                 </li>

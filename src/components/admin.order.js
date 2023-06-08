@@ -1,8 +1,7 @@
-import { useEffect, useState } from "react";
-import SideBar from "./sidebar";
-import Footer from "./footer";
-const History = () => {
-  const id = JSON.parse(localStorage.getItem("user")).id;
+import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+function AdminOrder(props) {
+  const isLoggedIn = localStorage.getItem("admin") !== null ? true : false;
   const [orderedItems, setOrderedItems] = useState([]);
   const [orders, setOrders] = useState([]);
   const [books, setBooks] = useState([]);
@@ -16,7 +15,7 @@ const History = () => {
   useEffect(() => {
     const fetchOder = async () => {
       try {
-        const response = await fetch(`http://localhost:8080/orders/${id}`);
+        const response = await fetch(`http://localhost:8080/orders`);
         const data = await response.json();
         setOrders(data);
       } catch (error) {
@@ -48,6 +47,19 @@ const History = () => {
     fetchOderedItem();
     fetchBooks();
   }, [orders]);
+  const confirmOrder =(OrderId)=>{
+    if (window.confirm("Bạn có chắc chắn muốn xác nhận đơn hàng này?")) {
+        fetch(`http://localhost:8080/orders/confirm/${OrderId}`, {
+          method: "PUT",
+        })
+          .then((response) => {
+            if (response.ok) {
+              // Update the state with the remaining books
+            }
+          })
+          .catch((err) => console.log(err));
+      }
+  }
   const DeleteOrder = (OrderId) => {
     if (window.confirm("Bạn có chắc chắn muốn xóa đơn hàng này?")) {
       fetch(`http://localhost:8080/orders/delete/${OrderId}`, {
@@ -76,70 +88,218 @@ const History = () => {
         .catch((err) => console.log(err));
     }
   };
+  
   return (
-    <div>
-      <SideBar />
-      <div className="iq-top-navbar">
-        <div className="iq-navbar-custom">
-          <nav className="navbar navbar-expand-lg navbar-light p-0">
-            <div className="iq-menu-bt d-flex align-items-center">
-              <div className="iq-navbar-logo d-flex justify-content-between">
-                <a href="/" className="header-logo">
+    <div class="wrapper">
+      <div class="iq-sidebar">
+        <div class="iq-sidebar-logo d-flex justify-content-between">
+          <a href="/admin" class="header-logo">
+            <img
+              src="images/logo.png"
+              class="img-fluid rounded-normal"
+              alt=""
+            />
+            <div class="logo-title">
+              <span class="text-primary text-uppercase">
+                thư viện trực tuyến
+              </span>
+            </div>
+          </a>
+          <div class="iq-menu-bt-sidebar">
+            <div class="iq-menu-bt align-self-center">
+              <div class="wrapper-menu">
+                <div class="main-circle">
+                  <i class="las la-bars"></i>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div id="sidebar-scrollbar">
+          <nav class="iq-sidebar-menu">
+            {isLoggedIn ? (
+              <ul id="iq-sidebar-toggle" class="iq-menu">
+                <li>
+                  <a
+                    href="/admin"
+                  >
+                    <i class="ri-record-circle-line "></i>Sách
+                  </a>
+                </li>
+                <li>
+                  <a href="/admin/order"  className="text-primary"  style={{ pointerEvents: "none", cursor: "none" }}>
+                    <i class="ri-record-circle-line"></i>Đơn hàng
+                  </a>
+                </li>
+                <li>
+                  <Link
+                    onClick={() => {
+                      localStorage.removeItem("admin");
+                    }}
+                    to="/sign-in"
+                  >
+                    <i class="ri-record-circle-line"></i>Đăng Xuất
+                  </Link>
+                </li>
+              </ul>
+            ) : (
+              <ul id="iq-sidebar-toggle" class="iq-menu">
+                <li>
+                  <a
+                    href="admin-books.html"
+                    className="text-primary"
+                    style={{ pointerEvents: "none", cursor: "none" }}
+                  >
+                    <i class="ri-record-circle-line text-primary"></i>Sách
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="admin-category.html"
+                    style={{ pointerEvents: "none", cursor: "none" }}
+                  >
+                    <i class="ri-record-circle-line"></i>Đơn hàng
+                  </a>
+                </li>
+                <li>
+                  <a href="/sign-in">
+                    <i class="ri-record-circle-line"></i>Đăng Nhập
+                  </a>
+                </li>
+              </ul>
+            )}
+          </nav>
+        </div>
+      </div>
+      <div class="iq-top-navbar">
+        <div class="iq-navbar-custom">
+          <nav class="navbar navbar-expand-lg navbar-light p-0">
+            <div class="iq-menu-bt d-flex align-items-center">
+              <div class="wrapper-menu">
+                <div class="main-circle">
+                  <i class="las la-bars"></i>
+                </div>
+              </div>
+              <div class="iq-navbar-logo d-flex justify-content-between">
+                <a href="/admin" class="header-logo">
                   <img
-                    src="images/logo200.png"
-                    className="img-fluid rounded-normal"
+                    src="images/logo.png"
+                    class="img-fluid rounded-normal"
                     alt=""
                   />
-                  <div className="logo-title">
-                    <span className="text-primary text-uppercase">
-                      Trang chủ
+                  <div class="logo-title">
+                    <span class="text-primary text-uppercase">
+                      thư viện trực tuyến
                     </span>
                   </div>
                 </a>
               </div>
             </div>
-            <div className="navbar-breadcrumb">
-              <a
-                href="/"
-                className="iq-waves-effect"
-                aria-expanded="true"
-                style={{ fontSize: "20px", fontWeight: "bold" }}
-              >
-                <span className="ripple rippleEffect"></span>
-                <i className="las la-home iq-arrow-left"></i>
-                <span>Trang Chủ</span>
-              </a>
+            <div class="navbar-breadcrumb">
+              <h5 class="mb-0">Sách</h5>
+              <nav aria-label="breadcrumb">
+                <ul class="breadcrumb">
+                  <li class="breadcrumb-item">
+                    <a
+                      href="/admin"
+                      style={{ pointerEvents: "none", cursor: "none" }}
+                    >
+                      Admin
+                    </a>
+                  </li>
+                  <li
+                    class="breadcrumb-item active text-primary"
+                    aria-current="page"
+                  >
+                    Sách
+                  </li>
+                </ul>
+              </nav>
             </div>
-            <div className="iq-search-bar"></div>
+
+            <button
+              class="navbar-toggler"
+              type="button"
+              data-toggle="collapse"
+              data-target="#navbarSupportedContent"
+              aria-controls="navbarSupportedContent"
+              aria-label="Toggle navigation"
+            >
+              <i class="ri-menu-3-line"></i>
+            </button>
             <div
               className="collapse navbar-collapse"
               id="navbarSupportedContent"
             >
               <ul className="navbar-nav ml-auto navbar-list">
+                {isLoggedIn ? (
+                  <li className="" style={{ padding: "0", display: "flex" }}>
+                    <Link
+                      to="/sign-in"
+                      className="search-toggle iq-waves-effect d-flex align-items-center"
+                      style={{ alignItems: "center" }}
+                      onClick={() => {
+                        localStorage.removeItem("admin");
+                      }}
+                    >
+                      <i className="ri-login-line mr-2"></i>
+                      <span>Đăng xuất</span>
+                    </Link>
+                  </li>
+                ) : (
+                  <li className="" style={{ padding: "0", display: "flex" }}>
+                    <Link
+                      to="/sign-in"
+                      className="search-toggle iq-waves-effect d-flex align-items-center"
+                      style={{ alignItems: "center" }}
+                    >
+                      <i className="ri-login-line mr-2"></i>
+                      <span>Đăng nhập</span>
+                    </Link>
+                  </li>
+                )}
                 <li className="line-height pt-3">
-                  <a
-                    href="#"
-                    className="search-toggle iq-waves-effect d-flex align-items-center"
-                  >
-                    <img
-                      src="http://localhost:3000/images/user/default_user.png"
-                      className="img-fluid rounded-circle mr-3"
-                      alt="user"
-                    />
-                    <div className="caption">
-                      <h6 className="mb-1 line-height">
-                        {JSON.parse(localStorage.getItem("user")).name}
-                      </h6>
-                    </div>
-                  </a>
+                  {isLoggedIn ? (
+                    <Link
+                      style={{ pointerEvents: "none", cursor: "none" }}
+                      className="search-toggle iq-waves-effect d-flex align-items-center"
+                    >
+                      <img
+                        src="http://localhost:3000/images/user/default_user.png"
+                        className="img-fluid rounded-circle mr-3"
+                        alt="user"
+                      />
+                      <div className="caption">
+                        <h6 className="mb-1 line-height">
+                          {JSON.parse(localStorage.getItem("admin")).name}
+                        </h6>
+                      </div>
+                    </Link>
+                  ) : (
+                    <Link
+                      to="/sign-in"
+                      className="search-toggle iq-waves-effect d-flex align-items-center"
+                    >
+                      <img
+                        src="http://localhost:3000/images/user/default_user.png"
+                        className="img-fluid rounded-circle mr-3"
+                        alt="user"
+                      />
+                      <div className="caption">
+                        <h6 className="mb-1 line-height">
+                          Bạn đang chưa đăng nhập
+                        </h6>
+                      </div>
+                    </Link>
+                  )}
                 </li>
               </ul>
             </div>
           </nav>
         </div>
       </div>
-      {/*-----------------------------------------End header-------------------------------------------------*/}
-
+      {/* TOP Nav Bar END */}
+      {/* Page Content  */}
       <div id="content-page" className="content-page">
         <div className="container-fluid checkout-content">
           <div className="row">
@@ -158,7 +318,7 @@ const History = () => {
                     <div className="iq-card">
                       <div className="iq-card-header d-flex justify-content-between iq-border-bottom mb-0">
                         <div className="iq-header-title">
-                          <h4 className="card-title">Đơn hàng của bạn</h4>
+                          <h4 className="card-title">Mã đơn hàng: {order.id}</h4>
                         </div>
                         <div className="col-sm-2">
                           <button
@@ -266,16 +426,17 @@ const History = () => {
                           <b>Chi tiết</b>
                         </p>
                         <div className="d-flex justify-content-between mb-1">
-                          <span>Tổng</span>
-                          <span>{formatCurrency(order.total *100/105)}</span>
+                          <span>Tên khách hàng</span>
+                          <span>{order.name}: </span>
                         </div>
                         <div className="d-flex justify-content-between mb-1">
-                          <span>Thuế VAT (5%)</span>
-                          <span>{formatCurrency((order.total *100/105 * 5) / 100)}</span>
+                          <span>Số điện thoại: </span>
+                          <span>{order.phone}</span>
                         </div>
                         <div className="d-flex justify-content-between">
-                          <span>Phí vận chuyển</span>
-                          <span className="text-success">Miễn phí</span>
+                            <div style={{width: "100%",textAlign:"left"}}>
+                          <span>Địa chỉ: {order.address}, Phường {order.ward}, {order.city}</span>
+                          </div>                       
                         </div>
                         <hr />
                         <div className="d-flex justify-content-between">
@@ -294,13 +455,13 @@ const History = () => {
                             <strong>Trạng thái</strong>
                           </span>
                           {order.status==="Chờ xác nhận"?(
-                            <button className=" btn btn-warning "> {order.status}</button>
+                            <button className=" btn btn-warning " onClick={()=>confirmOrder(order.id)}> Nhấn để xác nhận</button>
                           ):(
-                            <button className=" btn btn-success "> {order.status}</button>
+                            <button className=" btn btn-success " style={{cursor:"none",pointerEvents:"none"}}> {order.status}</button>
                           )
                           }
                         </div>
-                      </div>
+                      </div>                   
                     </div>
                   </div>
                 </div>
@@ -308,15 +469,26 @@ const History = () => {
               })):(
                 <div>
                 <hr/>
-                <h4> Hiện tại bạn chưa có đơn hàng nào</h4>
+                <h4> Hiện tại chưa có đơn hàng nào</h4>
                 </div>
               )}
             </div>
           </div>
         </div>
       </div>
-      <Footer/>
+
+
+      {/*End Content */}
+      <footer className="iq-footer">
+        <div className="container-fluid">
+          <div className="row">
+            <div className="col-lg-6 text-right">
+              Thư viện trực tuyến By Nguyễn Thanh Hoàng - B20DCCN278
+            </div>
+          </div>
+        </div>
+      </footer>
     </div>
   );
-};
-export default History;
+}
+export default AdminOrder;

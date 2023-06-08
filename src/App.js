@@ -11,6 +11,7 @@ import Cart from "./components/cart";
 import Checkout from "./components/checkout";
 import History from "./components/history";
 import AdminBook from "./components/admin.book";
+import AdminOrder from "./components/admin.order";
 const App = () => {
   console.log(localStorage);
   return (
@@ -26,6 +27,7 @@ const App = () => {
         <Route path="/checkout" element ={<Checkout/>}></Route>
         <Route path="/history/:id" element={<History />} />
         <Route path="/admin/book/:id" element={<AdminBook/>} />
+        <Route path="/admin/order" element={<AdminOrder/>} />
       </Routes>
     </div>
   );
